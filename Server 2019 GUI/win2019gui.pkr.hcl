@@ -9,6 +9,7 @@ source "vsphere-iso" "win-2019-std-gui" {
     destroy = var.library_vm_destroy
     library = var.content_library_destination
     name    = var.template_library_Name
+    description = var.template_library_description
     ovf     = var.ovf
   }
   datacenter           = var.vsphere_datacenter
@@ -54,6 +55,9 @@ build {
                       "include:$true"
             ]
             update_limit = 25
+  }
+  provisioner "powershell" {
+    scripts           = var.final_script_files
   }
   post-processor "manifest" {
     output = "output/out-win-2019-std-gui.json"
