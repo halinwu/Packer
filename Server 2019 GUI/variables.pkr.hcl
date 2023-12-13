@@ -1,19 +1,35 @@
 // variables.pkr.hcl
+packer {
+  required_version = ">= 1.7.0"
+  required_plugins {
+    vsphere = {
+      source  = "github.com/hashicorp/vsphere"
+      version = "~> 1"
+    }
+    vmware = {
+      version = ">= 1.0.8"
+      source  = "github.com/hashicorp/vmware"
+    }
+    windows-update = {
+      version = ">= 0.14.1"
+      source = "github.com/rgl/windows-update"
+    }
+  }
+}
 variable "vsphere_server" {
   type    = string
-  default = "vm-vcsa-01.smt-lab.local"
-  description = "vCenter Server you are deploying your template to"
+  default = "genvcs01.pkbiz.vmware.int"
+  description = "vCenter Server"
 }
 variable "vsphere_user" {
   type      = string
-  default   = "stephan@smt-lab.local"
+  default   = "hbadmin@vsphere.local"
   sensitive = true
-  description = "User with permissions to create VM's and import to the content library"
 }
 variable "vsphere_password" {
-  type      = string
+  type  = string
+  default = "VMware123!" // vCenter administrtor user's password 
   sensitive = true
-  description = "Password for vSphere_User"
 }
 variable "insecure_connection" {
   type    = bool
@@ -22,29 +38,32 @@ variable "insecure_connection" {
 }
 variable "vsphere_folder" {
   type    = string
-  default = "Templates"
+  default = "Temp"
   description = "Folder that the VM will temporarily be storaged in while before upload to the content library"
 }
 variable "vsphere_datacenter" {
     type    = string
+    default = "RaycomDC"
     description = "Target Datacenter for the deployment"
 }
 variable "vsphere_compute_cluster" {
     type    = string
+    default = "vSAN"
     description = "Target Cluster for the deployment"
 }
 variable "vsphere_portgroup_name" {
     type    = string
+    default = "Private-Halin"
     description = "Target Portgroup/network for the deployment (PXE enabled with internet access for Windows patching)"
 }
 variable "vsphere_datastore" {
     type    = string
-    default = ""
+    default = "vsanDatastore"
     description = "Target Datacenter for the deployment"
 }
 variable "content_library_destination" {
   type    = string
-  default = "Images"
+  default = "iso"
   description = "Name of the content library the template will be uploaded to"
 }
 variable "template_library_Name" {
@@ -87,12 +106,15 @@ variable "firmware" {
 }
 variable "vm_version" {
   type = string
-  default = "17"
+  default = "20"
   description = "VM Hardware Version.  Default should be the minimum common version for the versions of vSphere the template will be used"
 }
 variable "notes" {
   type = string
   description = "Any notes to be added to the template object"
+}
+variable "template_library_description" {
+  type    = string
 }
 variable "guest_os_type" {
   type = string
@@ -160,4 +182,8 @@ variable "config_files" {
 variable "script_files" {
     type    = list(string)
   description = "Specify all files and folders that need to be made available AFTER the OS install"
+}
+variable "final_script_files" {
+  type    = list(string)
+  description = "Specify all files and folders that need to be made available AFTER the OS upgraded"
 }
